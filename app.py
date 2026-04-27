@@ -1,28 +1,29 @@
 import os
 import sys
 
-# --- TRAVA DE SEGURANÇA PARA O STREAMLIT (DEVE SER O PRIMEIRO COMANDO) ---
+# --- TRAVA DE SEGURANÇA PARA O STREAMLIT ---
 if os.getenv("STREAMLIT_CLOUD_DUMMY") or "streamlit" in sys.modules:
-    exit()
+    print("Ambiente Cloud detectado. Encerrando execução para evitar conflito de hardware."); sys.exit(0)
 
-import customtkinter as ctk
 import openai
 import threading
 import time
 import random
+import numpy as np
+from datetime import datetime
+from io import BytesIO
+
+# Imports pesados que o Streamlit não alcançará
+import customtkinter as ctk
 import sounddevice as sd
 import soundfile as sf
 import pygame
 import webbrowser
 import pyautogui
-import numpy as np
-from datetime import datetime
-from io import BytesIO
 
 # --- SUPRESSÃO DE LOGS ---
 import warnings
-warnings.filterwarnings("ignore")
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
+warnings.filterwarnings("ignore"); os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 
 # ==================================================
 # 🛡️ JARVIS OMNI PROTOCOL - GABRIEL SABINO
