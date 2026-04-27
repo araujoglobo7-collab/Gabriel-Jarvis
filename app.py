@@ -17,6 +17,9 @@ from io import BytesIO
 import warnings
 warnings.filterwarnings("ignore")
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
+if os.getenv("STREAMLIT_CLOUD_DUMMY"): 
+    # Se estiver na nuvem, o código para aqui e não dá erro de import
+    exit()
 
 # ==================================================
 # 🛡️ JARVIS OMNI PROTOCOL - GABRIEL SABINO ==================================================
