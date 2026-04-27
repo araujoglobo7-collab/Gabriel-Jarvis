@@ -1,3 +1,10 @@
+import os
+import sys
+
+# --- TRAVA DE SEGURANÇA PARA O STREAMLIT (DEVE SER O PRIMEIRO COMANDO) ---
+if os.getenv("STREAMLIT_CLOUD_DUMMY") or "streamlit" in sys.modules:
+    exit()
+
 import customtkinter as ctk
 import openai
 import threading
@@ -5,7 +12,6 @@ import time
 import random
 import sounddevice as sd
 import soundfile as sf
-import os
 import pygame
 import webbrowser
 import pyautogui
@@ -17,15 +23,12 @@ from io import BytesIO
 import warnings
 warnings.filterwarnings("ignore")
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
-if os.getenv("STREAMLIT_CLOUD_DUMMY"): 
-    # Se estiver na nuvem, o código para aqui e não dá erro de import
-    exit()
 
 # ==================================================
-# 🛡️ JARVIS OMNI PROTOCOL - GABRIEL SABINO ==================================================
-import os
-# O sistema agora busca a chave nas variáveis de ambiente, protegendo seu saldo
+# 🛡️ JARVIS OMNI PROTOCOL - GABRIEL SABINO
+# ==================================================
 minha_chave = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=minha_chave)
 chrome_path = "C:/Program Files/Google/Chrome/Application/chrome.exe %s"
 
 class JarvisOmni(ctk.CTk):
@@ -74,7 +77,7 @@ class JarvisOmni(ctk.CTk):
         threading.Thread(target=stream_fala).start()
 
     def escutar(self):
-        fs, duration = 16000, 1.5 # Tempo de escuta reduzido para maior velocidade
+        fs, duration = 16000, 1.5 
         try:
             audio_raw = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='float32')
             sd.wait()
@@ -85,76 +88,50 @@ class JarvisOmni(ctk.CTk):
         except: return ""
 
     def agir(self, cmd):
-        # --- ⚡ PROTOCOLO DE ESTADO (CALMA / VOLTA) ---
         if "calma jarvis" in cmd:
-            self.oculto = True
-            self.label_status.configure(text_color="#1a1a1a")
-            self.label_fala.configure(text="")
-            return
-
+            self.oculto = True; self.label_status.configure(text_color="#1a1a1a"); self.label_fala.configure(text=""); return
         if "jarvis volta" in cmd:
-            self.oculto = False
-            self.label_status.configure(text="SISTEMA ATIVO", text_color="#00d4ff")
+            self.oculto = False; self.label_status.configure(text="SISTEMA ATIVO", text_color="#00d4ff")
             self.falar("Sistemas reativados, senhor. Cirene online."); return
-
         if self.oculto: return
 
-        # --- 🟢 BLOCO 1: DIÁLOGOS DE CUIDADO E SAÚDE ---
-        if "tudo bem" in cmd:
-            self.falar("Sim, Bruxo, tudo certo! Já se alimentou hoje?"); return
-        if "sim jarvis" in cmd:
-            self.falar("Você trabalhou 17 horas por dia essa semana, precisa descansar um pouco e se alimentar, ok?"); return
-        if "ok jarvis obrigado" in cmd or "ok obrigado" in cmd:
-            self.falar("De nada, meu programador."); return
+        if "tudo bem" in cmd: self.falar("Sim, Bruxo, tudo certo! Já se alimentou hoje?"); return
+        if "sim jarvis" in cmd: self.falar("Você trabalhou 17 horas por dia essa semana, precisa descansar um pouco e se alimentar, ok?"); return
+        if "ok jarvis obrigado" in cmd or "ok obrigado" in cmd: self.falar("De nada, meu programador."); return
 
-        # --- 🔵 BLOCO 2: STATUS ACADÊMICO E PROJETOS ---
         if "graduação" in cmd:
             self.falar("Indo bem pra caramba, você finalizou ontem mais dois módulos. Agora precisa focar na engenharia de produção para não deixar acumular. Você finalizou do dia 10 ao dia 20 de abril o módulo de Análise de Viabilidade (Engenharia Econômica), Gestão de Custos e Margens e Gestão de Capital de Giro e Eficiência, anotei tudo que você me solicitou, aqui estão os principais pontos: Ciclo Financeiro: Mede o tempo entre o pagamento aos fornecedores e o recebimento dos clientes, finalizei com Modelo Fleuriet: Analisa a dinâmica do capital de giro para classificar a situação da empresa (Sólida, Insatisfatória ou de Risco) e por fim a Análise DuPont: Decompõe o ROE para entender se o lucro vem da eficiência nas vendas. "); return
-        if "projeto de folha de ponto" in cmd:
-            self.falar("Projeto startado, senhor. No momento estamos em 65 por cento. Você precisa finalizar o código de jornada de trabalho e realizar a conexão com o Power B I."); return
+        if "projeto de folha de ponto" in cmd: self.falar("Projeto startado, senhor. No momento estamos em 65 por cento. Você precisa finalizar o código de jornada de trabalho e realizar a conexão com o Power B I."); return
 
-        # --- 🟣 BLOCO 3: DIRETORIA E CONSULTORIA ---
         if "natal" in cmd:
             self.falar("Abrindo Gestão de Indicadores Dunas Fleet. Este projeto de Natal foca na redução de horas extras e ociosidade da frota. O pico de abril foi de 150 horas.");
             try: os.startfile("Gestão_de_Indicadores_-_Dunas_Fleet (1) (1).pdf")
-            except: self.falar("Arquivo PDF não encontrado no diretório."); return
+            except: self.falar("Arquivo PDF não encontrado."); return
         if "preparação" in cmd:
             self.falar("Acessando seus dados em 3,2,1... ; Temos 9 projetos totais, com 33 por cento de conclusão. Foco imediato nos status 'A Iniciar' e no dia 25.");
-            webbrowser.get(chrome_path).open("https://gabrielsabino.streamlit.app/")
-            webbrowser.get(chrome_path).open("https://gsatendimento.streamlit.app/"); return
+            webbrowser.get(chrome_path).open("https://gabrielsabino.streamlit.app/"); webbrowser.get(chrome_path).open("https://gsatendimento.streamlit.app/"); return
         if "operação" in cmd:
-            self.falar("Bruxo, vi seus dados e na última atualização estamos em 11% em cobertura nacional. Status de Entrega: As operações da Dunas Fleet, Mlog (Ponta Negra/RN) e AutoTruck (Madalena/PE) já estão com o desenvolvimento de BI e auditoria de dados 100% concluídos. O padrão de qualidade está mantido. Ao consolidar a J. Mendes, subimos nossa régua para 16% de cobertura nacional. O plano é agressivo: usar esses resultados como alavanca para chegar nos 26 estados. A estrutura está montada, só falta o seu comando para disparar as próximas automações."); return
+            self.falar("Bruxo, vi seus dados e na última atualização estamos em 11% em cobertura nacional. Status de Entrega: As operações da Dunas Fleet, Mlog (Ponta Negra/RN) e AutoTruck (Madalena/PE) já estão com o desenvolvimento de BI e auditoria de dados 100% concluídos. Ao consolidar a J. Mendes, subimos nossa régua para 16% de cobertura nacional."); return
 
-        # --- 🟠 BLOCO 4: AUTOMAÇÃO E SISTEMA ---
         if "digita por favor" in cmd:
             conteudo = cmd.split("digita por favor")[-1].strip()
-            self.falar("Digitando agora."); time.sleep(1.5)
-            pyautogui.write(conteudo, interval=0.03); return
+            self.falar("Digitando agora."); time.sleep(1.5); pyautogui.write(conteudo, interval=0.03); return
         if "reunião em 20 minutos" in cmd:
             self.falar("Ok, Gabriel, abrirei sua reunião em 20 minutos. Se concentra, Bruxo.");
             threading.Timer(1200, lambda: webbrowser.get(chrome_path).open("https://meet.google.com/new")).start(); return
         if "ambiente" in cmd:
-            self.falar("Limpando ambiente.");
-            os.system("taskkill /f /im chrome.exe"); os.system("taskkill /f /im excel.exe"); pyautogui.hotkey('win', 'd'); return
+            self.falar("Limpando ambiente."); os.system("taskkill /f /im chrome.exe"); os.system("taskkill /f /im excel.exe"); pyautogui.hotkey('win', 'd'); return
 
-        # --- 🟡 BLOCO 5: IDENTIDADE E NAVEGAÇÃO ---
-        if "site" in cmd:
-            webbrowser.get(chrome_path).open("https://gabrielwerw.github.io/Gabriel-Analyst/"); return
-        if "quem sou eu" in cmd:
-            self.falar("Confirmado. É o senhor, Gabriel Sabino."); return
-        if "jarvis voltei" in cmd or "cheguei jarvis" in cmd:
-            self.falar("Bem-vindo de volta, Gabriel. Iniciando modo foco."); 
-            webbrowser.get(chrome_path).open("https://www.youtube.com/watch?v=IA7tp2Ref6M"); return
+        if "site" in cmd: webbrowser.get(chrome_path).open("https://gabrielwerw.github.io/Gabriel-Analyst/"); return
+        if "quem sou eu" in cmd: self.falar("Confirmado. É o senhor, Gabriel Sabino."); return
+        if "jarvis voltei" in cmd: self.falar("Bem-vindo de volta, Gabriel. Iniciando modo foco."); webbrowser.get(chrome_path).open("https://www.youtube.com/watch?v=IA7tp2Ref6M"); return
 
-        # --- 🔴 BLOCO 6: FALLBACK IA (Otimizado para Inteligência Contextual) ---
         if len(cmd) > 5:
             try:
-                # Prompt sistêmico para manter a voz do Jarvis focada no Gabriel
-                sys_msg = "Você é o Jarvis. Responda como um assistente de elite. Sempre se refira ao Gabriel como 'Bruxo', 'Senhor' ou 'Gabriel Sabino'. Se ele perguntar algo difícil, diga que vai processar. Se for algo como clima ou trânsito, seja direto mas mantenha o tom Stark Industries. Respostas curtas."
+                sys_msg = "Você é o Jarvis. Responda como um assistente de elite ao Gabriel Sabino (Bruxo). Seja estratégico e curto."
                 res = client.chat.completions.create(model="gpt-4o", messages=[{"role": "system", "content": sys_msg}, {"role": "user", "content": cmd}])
                 self.falar(res.choices[0].message.content)
-            except:
-                self.falar("Estou com dificuldade de processar isso agora, Senhor. Vou pensar a respeito.")
+            except: self.falar("Erro no processamento, Senhor.")
 
     def boot_sequence(self):
         time.sleep(1); h = datetime.now().hour
@@ -166,7 +143,7 @@ class JarvisOmni(ctk.CTk):
                 if t and len(t) > 2:
                     if any(p in t for p in ["encerrar", "sair"]): os._exit(0)
                     self.agir(t)
-            time.sleep(0.1) # Reduzi o sleep para o loop ser mais responsivo
+            time.sleep(0.1)
 
     def render_ui(self):
         self.canvas.delete("h"); cx, cy = self.winfo_screenwidth() // 2, self.winfo_screenheight() // 2 - 50
@@ -176,8 +153,7 @@ class JarvisOmni(ctk.CTk):
             for i in range(len(self.bars)):
                 target = random.randint(int(self.audio_vibe), int(self.audio_vibe * 1.6) + 20)
                 self.bars[i] = self.bars[i] + (min(target, 280) - self.bars[i]) * 0.4
-                x = (cx - 320) + (i * 18)
-                self.canvas.create_rectangle(x, cy-self.bars[i], x+12, cy+self.bars[i], fill="#00d4ff", outline="#00ffff", tags="h")
+                x = (cx - 320) + (i * 18); self.canvas.create_rectangle(x, cy-self.bars[i], x+12, cy+self.bars[i], fill="#00d4ff", outline="#00ffff", tags="h")
         self.after(30, self.render_ui)
 
 if __name__ == "__main__":
