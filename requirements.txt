@@ -1,0 +1,8 @@
+customtkinter
+openai
+sounddevice
+soundfile
+pygame
+pyautogui
+numpy
+opencv-python
