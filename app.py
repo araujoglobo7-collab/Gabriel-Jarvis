@@ -1,25 +1,30 @@
 import os
 import sys
 
+# --- BLOCO DE COMPATIBILIDADE (BLINDAGEM) ---
+try:
+    import customtkinter as ctk
+    import sounddevice as sd
+    import soundfile as sf
+    import pygame
+    import pyautogui
+except ImportError:
+    # Se der erro aqui, significa que estamos na nuvem. 
+    # Não faz nada, a trava abaixo vai encerrar o processo.
+    pass
+
 # --- TRAVA DE SEGURANÇA PARA O STREAMLIT ---
 if os.getenv("STREAMLIT_CLOUD_DUMMY") or "streamlit" in sys.modules:
-    print("Ambiente Cloud detectado. Encerrando execução para evitar conflito de hardware."); sys.exit(0)
+    print("Ambiente Cloud detectado."); sys.exit(0)
 
 import openai
 import threading
 import time
 import random
 import numpy as np
+import webbrowser
 from datetime import datetime
 from io import BytesIO
-
-# Imports pesados que o Streamlit não alcançará
-import customtkinter as ctk
-import sounddevice as sd
-import soundfile as sf
-import pygame
-import webbrowser
-import pyautogui
 
 # --- SUPRESSÃO DE LOGS ---
 import warnings
